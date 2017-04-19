@@ -1,9 +1,6 @@
 #ifndef WORKBOOK_H
 #define WORKBOOK_H
 
-#include <string>
-#include <list>
-
 namespace std {
 typedef basic_string<char, char_traits<char>, allocator<char> > string;
 template<class _Ty, class _Alloc = allocator<_Ty> > class list;
@@ -20,7 +17,7 @@ public:
     ~WordBook();
 
     void insert(const std::string& word);
-    void insert(const WordList& word);
+    void insert(const WordList& words);
 
     void remove(const std::string& word);
 

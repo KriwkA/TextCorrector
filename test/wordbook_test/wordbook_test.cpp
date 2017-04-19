@@ -36,15 +36,13 @@ BOOST_AUTO_TEST_CASE( insert_test )
 BOOST_AUTO_TEST_CASE( size_test )
 {
     WordBook list;
-
-    BOOST_CHECK(list.size() == 0);
+    BOOST_CHECK_EQUAL(list.size(), 0);
     list.insert("rain");
-    BOOST_CHECK(list.size() == 1);
+    BOOST_CHECK_EQUAL(list.size(), 1);
     list.insert("rain");
-    BOOST_CHECK(list.size() == 1);
+    BOOST_CHECK_EQUAL(list.size(), 1);
     list.insert("rai");
-    BOOST_CHECK(list.size() == 2);
-
+    BOOST_CHECK_EQUAL(list.size(), 2);
 }
 
 BOOST_AUTO_TEST_CASE( hasWord_test )
@@ -54,7 +52,6 @@ BOOST_AUTO_TEST_CASE( hasWord_test )
     BOOST_CHECK(!list.hasWord("test"));
     list.insert("test");
     BOOST_CHECK(list.hasWord("test"));
-
 
     BOOST_CHECK(!list.hasWord("testt"));
     list.insert("testt");
@@ -92,12 +89,12 @@ BOOST_AUTO_TEST_CASE( words_test )
     list.insert(words);
     WordList wordsFromList = list.words();
 
-    BOOST_CHECK(wordsFromList.size() == 5);
+    BOOST_CHECK_EQUAL(list.size(), 5);
     BOOST_CHECK(contains(wordsFromList, words));
 
     list.remove("five");
-    BOOST_CHECK(!contains(wordsFromList, words));
-
+    BOOST_CHECK_EQUAL(list.size(), 4);
+    BOOST_CHECK(!contains(list.words(), words));
 
 }
 
