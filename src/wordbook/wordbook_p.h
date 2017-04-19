@@ -111,8 +111,8 @@ public:
             return result;
 
         if(m_wordEnd) {
-            if(begin == end && prevOperation == Remove) {
-//                pushIfNotSelect(result);
+            if(begin == end) {
+
             } else if(begin + 1 == end) {
                 if(m_letter == *begin)
                     pushIfNotSelect(result);

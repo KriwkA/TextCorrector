@@ -19,13 +19,11 @@ public:
     void insert(const std::string& word);
     void insert(const WordList& words);
 
-    void remove(const std::string& word);
-
     int size() const;
     bool hasWord(const std::string& word) const;
     WordList words() const;
 
-    WordList correctTheWord(const std::string& str) const;
+    WordList correctTheWord(const std::string& str) const ;
 
 private:
     WordBookPrivate* m_private;

@@ -62,23 +62,6 @@ BOOST_AUTO_TEST_CASE( hasWord_test )
     list.insert(words);
 }
 
-BOOST_AUTO_TEST_CASE( remove_test )
-{
-    WordBook list;
-
-    list.insert("test");
-    list.insert("testt");
-
-    BOOST_CHECK(list.hasWord("test"));
-    BOOST_CHECK(list.hasWord("testt"));
-
-    list.remove("test");
-    BOOST_CHECK(!list.hasWord("test"));
-    BOOST_CHECK(list.hasWord("testt"));
-
-    list.remove("testt");
-    BOOST_CHECK(!list.hasWord("testt"));
-}
 
 BOOST_AUTO_TEST_CASE( words_test )
 {
@@ -90,12 +73,7 @@ BOOST_AUTO_TEST_CASE( words_test )
     WordList wordsFromList = list.words();
 
     BOOST_CHECK_EQUAL(list.size(), 5);
-    BOOST_CHECK(contains(wordsFromList, words));
-
-    list.remove("five");
-    BOOST_CHECK_EQUAL(list.size(), 4);
-    BOOST_CHECK(!contains(list.words(), words));
-
+    BOOST_CHECK(contains(wordsFromList, words));    
 }
 
 BOOST_AUTO_TEST_CASE( correctTheWord_test )
