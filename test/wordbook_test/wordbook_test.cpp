@@ -57,9 +57,6 @@ BOOST_AUTO_TEST_CASE( hasWord_test )
     list.insert("testt");
     BOOST_CHECK(list.hasWord("testt"));
 
-    WordList words({"one", "two", "three", "four", "five"});
-
-    list.insert(words);
 }
 
 

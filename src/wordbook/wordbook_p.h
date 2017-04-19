@@ -82,20 +82,18 @@ public:
 
     enum Operation {Equals = 0, Remove, Insert, Replace};
 
-    mutable std::set<const Node*> m_selectedWords;
-
-    void pushIfNotSelect(WordList& list) const
+    void pushIfNotSelect(WordList& list,  std::set<const Node*>& selectedWords) const
     {
-        if(m_selectedWords.count(this))
+        if(selectedWords.count(this))
             return;
-        m_selectedWords.insert(this);
+        selectedWords.insert(this);
         list.push_back(getWord());
     }
 
     WordList correctTheWord(const std::string& word, int maxEditCount) const
     {
         WordList result;
-        m_selectedWords.clear();
+
         for(const auto& child : m_childs) {
             Node* node = child.second;
             pushListToList(result, node->correctTheWord(word.cbegin(), word.cend(), maxEditCount));
@@ -103,7 +101,7 @@ public:
         return result;
     }
 
-    WordList correctTheWord(strciter begin, strciter end, int editCount, Operation prevOperation = Equals) const
+    WordList correctTheWord(strciter begin, strciter end, int editCount, Operation prevOperation = Equals, std::set<const Node*>& selectedWords = std::set<const Node*>()) const
     {
         WordList result;
 
@@ -112,16 +110,15 @@ public:
 
         if(m_wordEnd) {
             if(begin == end) {
-
-            } else if(begin + 1 == end) {
-                if(m_letter == *begin)
-                    pushIfNotSelect(result);
+                return result;
+            } else if(begin + 1 == end && m_letter == *begin) {
+                pushIfNotSelect(result, selectedWords);
             }
         }
 
         if(prevOperation != Insert) {
             for(const auto& child : m_childs) {
-                pushListToList(result, child.second->correctTheWord(begin, end, editCount - 1, Insert));
+                pushListToList(result, child.second->correctTheWord(begin, end, editCount - 1, Insert, selectedWords));
             }
         }
 
@@ -129,11 +126,13 @@ public:
             for(const auto& child : m_childs) {
                 Node* node = child.second;
                 if(*begin == m_letter)
-                    pushListToList(result, node->correctTheWord(begin + 1, end, editCount, Equals));
+                    pushListToList(result, node->correctTheWord(begin + 1, end, editCount, Equals, selectedWords));
             }
 
-            if(prevOperation != Remove)
-                pushListToList(result, this->correctTheWord(begin + 1, end, editCount - 1, Remove));
+            if(prevOperation != Remove) {
+                pushListToList(result, this->correctTheWord(begin + 1, end, editCount - 1, Remove, selectedWords));
+                pushListToList(result, this->correctTheWord(begin, end - 1, editCount - 1, Remove, selectedWords));
+            }
         }
 
         return result;
