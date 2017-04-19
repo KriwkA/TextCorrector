@@ -8,7 +8,6 @@
 WordBook::WordBook(int maxEditCount)
     : m_private(new WordBookPrivate(maxEditCount))   
 {
-
 }
 
 WordBook::~WordBook()
@@ -50,14 +49,21 @@ WordList WordBook::words() const
     return m_private->words();
 }
 
-WordList WordBook::correctTheWord(const std::string &str) const
+WordList WordBook::correctTheWord(const std::string &word) const
 {
-    if(hasWord(str))
-        return WordList({str});
-    return m_private->correctTheWord(str);
+    if(hasWord(word))
+        return WordList({word});
+    return m_private->correctTheWord(word);
 }
 
 //PRIVATE
+
+WordBookPrivate::WordBookPrivate(int maxEditCount)
+    : m_maxEditCount(maxEditCount)
+    , m_size(0)
+    , m_words(new Node())
+{
+}
 
 WordBookPrivate::~WordBookPrivate()
 {
@@ -70,11 +76,171 @@ void WordBookPrivate::insert(const std::string &word)
         m_size++;
 }
 
-
-
-
 WordList WordBookPrivate::words() const
 {
     return m_words->words();
+}
+
+Node::Node() : Node('\0') {}
+
+Node::Node(char letter, const Node *parent)
+    : m_letter(letter)
+    , m_wordEnd(false)
+    , m_parent(parent)
+{
+}
+
+Node::~Node() {
+    for(auto& node : m_childs)
+        delete node.second;
+}
+
+bool Node::insert(strciter begin, strciter end)
+{
+    if(begin == end) {
+        if(m_letter == '\0' || m_wordEnd)
+            return false;
+        return m_wordEnd = true;
+    }
+
+    if(!m_childs.count(*begin)) {
+        m_childs[*begin] = new Node(*begin, this);
+    }
+
+    return m_childs[*begin]->insert(begin + 1, end);
+}
+
+bool Node::hasWord(strciter begin, strciter end) const
+{
+    if(begin == end) {
+        return m_wordEnd;
+    }
+
+    if(!m_childs.count(*begin)) {
+        return false;
+    }
+
+    return m_childs.at(*begin)->hasWord(begin + 1, end);
+}
+
+WordList Node::words() const
+{
+    WordList result;
+    if(m_wordEnd) {
+        result.push_back(getWord());
+    }
+
+    for(const auto& child : m_childs) {
+        pushListToList(result, child.second->words());
+    }
+    return result;
+}
+
+WordList Node::correctTheWord(const std::string &word, int maxEditCount) const
+{
+    WordList result;
+    for(const auto& child : m_childs) {
+        const Node* node = child.second;
+        pushListToList(result, node->correctTheWord(word.cbegin(), word.cend(), maxEditCount));
+    }
+    return result;
+}
+
+WordList Node::correctTheWord(strciter begin, strciter end, int editCount, Node::Operation prevOperation, std::set<const Node *> &selectedWords) const
+{
+    if(editCount < 0)
+        return WordList();
+
+    WordList result;
+
+    if(begin == end && isEndNode()) {
+        m_parent->pushIfNotSelect(result, selectedWords);
+        return result;
+    }
+
+    if(begin == end && m_parent->m_wordEnd) {
+        m_parent->pushIfNotSelect(result, selectedWords);
+    }
+
+    if(!(begin == end || isEndNode())) {
+        if(*begin == m_letter)
+            CORRECT_EQUALS;
+        CORRECT_REMOVE;
+        CORRECT_INSERT;
+    } else if(isEndNode()) {
+        CORRECT_REMOVE;
+    } else {
+        CORRECT_INSERT;
+    }
+
+    return result;
+}
+
+WordList Node::correctInsert(strciter begin, strciter end, int editCount, Node::Operation prevOperation, std::set<const Node *> &selectedWords) const
+{
+    if(prevOperation == Insert)
+        return WordList();
+    return correctForChildsAndEndNode(begin, end, editCount - 1, Insert, selectedWords);
+}
+
+WordList Node::correctRemove(strciter begin, strciter end, int editCount, Node::Operation prevOperation, std::set<const Node *> &selectedWords) const
+{
+    if(prevOperation == Remove)
+        return WordList();
+    return this->correctTheWord(begin + 1, end, editCount - 1, Remove, selectedWords);
+}
+
+WordList Node::correctEquals(strciter begin, strciter end, int editCount, Node::Operation prevOperation, std::set<const Node *> &selectedWords) const
+{
+    return correctForChildsAndEndNode(begin + 1, end, editCount, Equals, selectedWords);
+}
+
+WordList Node::correctForChilds(strciter begin, strciter end, int editCount, Node::Operation prevOperation, std::set<const Node *> &selectedWords) const
+{
+    WordList result;
+    if(m_childs.size()) {
+        for(const auto& child : m_childs) {
+            const Node* node = child.second;
+            pushListToList(result, node->correctTheWord(begin, end, editCount, prevOperation, selectedWords));
+        }
+    }
+    return result;
+}
+
+WordList Node::correctForChildsAndEndNode(strciter begin, strciter end, int editCount, Node::Operation prevOperation, std::set<const Node *> &selectedWords) const
+{
+    WordList result;
+
+    if(m_childs.size()) {
+        for(const auto& child : m_childs) {
+            const Node* node = child.second;
+            pushListToList(result, node->correctTheWord(begin, end, editCount, prevOperation, selectedWords));
+        }
+    } else {
+        Node* node = new Node('\0', this);
+        pushListToList(result, node->correctTheWord(begin, end, editCount, prevOperation, selectedWords));
+        delete node;
+    }
+
+    return result;
+}
+
+std::string Node::getWord() const {
+    if(!m_parent)
+        return "";
+    return m_parent->getWord() + m_letter;
+}
+
+void Node::pushIfNotSelect(WordList &list, std::set<const Node *> &selectedWords) const
+{
+    if(selectedWords.count(this))
+        return;
+    selectedWords.insert(this);
+    list.push_back(getWord());
+}
+
+void Node::pushListToList(WordList &target, const WordList &data) {
+    for(const auto& word : data)
+        target.push_back(word);
 }
 
