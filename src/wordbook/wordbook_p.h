@@ -23,7 +23,9 @@ enum Operation {Equals = 0, Remove = 1, Insert = 2, Replace = 4};
 
 struct DP {
     std::map<strciter, std::set< std::pair<int, Operation>>> dp;
-    bool selected = false;
+    bool selected;
+
+    DP() : selected(false) {}
 
     bool check(strciter begin, int editCount, Operation oper) {
         return dp.count(begin) && dp.at(begin).count(std::make_pair(editCount, oper));

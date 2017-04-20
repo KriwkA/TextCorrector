@@ -153,11 +153,11 @@ WordList Node::correctTheWord(strciter begin, strciter end, int editCount, Node:
 {
     auto& currentdp = dp[this];
 
-    if(dp[this].check(begin, editCount, prevOperation)) {
+    if(currentdp.check(begin, editCount, prevOperation)) {
         return WordList();
     }
 
-    dp[this].set(begin, editCount, prevOperation);
+    currentdp.set(begin, editCount, prevOperation);
 
     if(editCount < 0)
         return WordList();
@@ -244,9 +244,10 @@ std::string Node::getWord() const {
 
 void Node::pushIfNotSelect(WordList &list, std::map<const Node*, DP>& dp) const
 {
-    if(dp[this].selected)
+    auto& currentdp = dp[this];
+    if(currentdp.selected)
         return;
-    dp[this].selected = true;
+    currentdp.selected = true;
     list.push_back(getWord());
 }
 
