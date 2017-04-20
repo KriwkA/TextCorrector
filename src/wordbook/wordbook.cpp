@@ -153,14 +153,9 @@ WordList Node::correctTheWord(strciter begin, strciter end, int editCount, Node:
 {
     auto& currentdp = dp[this];
 
-//    if(currentdp.check(begin, editCount, prevOperation)) {
-//        return WordList();
-//    }
-
-//    currentdp.set(begin, editCount, prevOperation);
-
-    if(editCount < 0)
+    if(currentdp.check(begin, editCount, prevOperation) || editCount < 0) {
         return WordList();
+    }
 
     WordList result;
 
@@ -183,6 +178,9 @@ WordList Node::correctTheWord(strciter begin, strciter end, int editCount, Node:
     } else {
         CORRECT_INSERT;
     }
+
+    currentdp.set(begin, editCount, prevOperation);
+
 
     return result;
 }

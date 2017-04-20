@@ -22,20 +22,19 @@ enum Operation {Equals = 0, Remove = 1, Insert = 2, Replace = 4};
 #define CORRECT_INSERT CORRECT_PUSH(correctInsert)
 
 struct DP {
-    std::map<strciter, std::set< std::pair<int, Operation>>> dp;
+    typedef std::pair<int, Operation> Pair;
+
+    std::map< strciter, std::set<Pair>> dp;
     bool selected;
 
     DP() : selected(false) {}
 
     bool check(strciter begin, int editCount, Operation oper) {
-        return dp.count(begin) && dp.at(begin).count(std::make_pair(editCount, oper));
+        return dp.count(begin) && dp.at(begin).count(Pair(editCount, oper));
     }
 
     void set(strciter begin, int editCount, Operation oper) {
-        if(!dp.count(begin)) {
-            dp[begin] = std::set< std::pair<int, Operation>>();
-        }
-        dp[begin].insert(std::make_pair(editCount, oper));
+        dp[begin].insert(Pair(editCount, oper));
     }
 };
 
