@@ -153,11 +153,11 @@ WordList Node::correctTheWord(strciter begin, strciter end, int editCount, Node:
 {
     auto& currentdp = dp[this];
 
-    if(currentdp.check(begin, editCount, prevOperation)) {
-        return WordList();
-    }
+//    if(currentdp.check(begin, editCount, prevOperation)) {
+//        return WordList();
+//    }
 
-    currentdp.set(begin, editCount, prevOperation);
+//    currentdp.set(begin, editCount, prevOperation);
 
     if(editCount < 0)
         return WordList();
