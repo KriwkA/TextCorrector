@@ -1,10 +1,8 @@
 #ifndef WORKBOOK_H
 #define WORKBOOK_H
 
-namespace std {
-typedef basic_string<char, char_traits<char>, allocator<char> > string;
-template<class _Ty, class _Alloc = allocator<_Ty> > class list;
-}
+#include <list>
+#include <string>
 
 typedef std::list<std::string> WordList;
 class WordBookPrivate;
@@ -12,6 +10,8 @@ class WordBookPrivate;
 class WordBook
 {
 public:
+    static const char* wordRegex;
+
     /*
      * params:
      *  @maxEditCount - the maximum count of insert/remove letter opperation that correctTheWord function can use;
@@ -24,7 +24,7 @@ public:
      *
      * throws:
      *  length_error if word is empty;
-     *  argument_error if word has forbidden symbol
+     *  invalid_argument if word has forbidden symbol
      */
     void insert(const std::string& word);
     void insert(const WordList& words);
@@ -50,8 +50,9 @@ public:
 private:
     WordBookPrivate* m_private;
 
-    //remove copy constructor and assignment operator
+    //remove copy, move constructors and assignment operator
     WordBook(const WordBook& other) = delete;
+    WordBook(const WordBook&& other) = delete;
     void operator=(const WordBook& other) = delete;
 };
 

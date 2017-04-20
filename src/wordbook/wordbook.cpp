@@ -5,6 +5,8 @@
 #include <exception>
 #include <regex>
 
+const char* WordBook::wordRegex = "^[A-za-z]+$";
+
 WordBook::WordBook(int maxEditCount)
     : m_private(new WordBookPrivate(maxEditCount))   
 {
@@ -20,7 +22,7 @@ void WordBook::insert(const std::string &word)
     if(word.empty())
         throw std::length_error("word musn`t be empty");
 
-    static const std::regex wordRegexpr("^[A-za-z]+$");
+    static const std::regex wordRegexpr(wordRegex);
 
     if(!std::regex_match(word, wordRegexpr))
         throw std::invalid_argument("word has forbidden symbol");
