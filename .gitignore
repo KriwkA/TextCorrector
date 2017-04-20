@@ -2,4 +2,7 @@
 /Assets/
 *.user
 *.autosave
+*.cmake
+Makefile
+CMakeCache.txt
 
