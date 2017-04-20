@@ -12,13 +12,15 @@ public:
 
     /*
      * This function reeds the words from @in stream and put them
-     * into wordbook, until not meets the "===" word
+     * into wordbook,
+     * Read continues until not meets the "===" word or streams end
      */
     void readWordBook(std::istream& in);
 
     /*
      * This operator reeds lines from @in stream, corrects the words
      * in which and append them in @list.
+     * Read continues until not meets the "===" word or streams end
      */
     friend std::istream &operator>>(std::istream& in, Text& list);
 

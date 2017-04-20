@@ -12,8 +12,7 @@ Text::Text()
 void Text::readWordBook(std::istream &in)
 {
     std::string str;
-    while(true) {
-        in >> str;
+    while(in >> str) {
         if(str == "===")
             break;
         try {
@@ -45,15 +44,12 @@ std::string Text::correctWord(const std::string &word)
 }
 
 std::istream &operator >> (std::istream &in,  Text &list)
-{
-
-    char c;
+{    
     std::string line;
     std::string word;
     std::string newLine;
 
-    while(true) {
-        std::getline(std::cin, line);
+    while(std::getline(std::cin, line)) {
         if(line == "===")
             break;
 
