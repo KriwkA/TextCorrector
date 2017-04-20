@@ -141,9 +141,10 @@ WordList Node::words() const
 WordList Node::correctTheWord(const std::string &word, int maxEditCount) const
 {
     WordList result;
+    auto selectedWords = std::set<const Node*>();
     for(const auto& child : m_childs) {
         const Node* node = child.second;
-        pushListToList(result, node->correctTheWord(word.cbegin(), word.cend(), maxEditCount));
+        pushListToList(result, node->correctTheWord(word.cbegin(), word.cend(), maxEditCount, Equals, selectedWords));
     }
     return result;
 }

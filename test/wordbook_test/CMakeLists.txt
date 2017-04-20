@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 
+set (CMAKE_CXX_STANDARD 11)
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 

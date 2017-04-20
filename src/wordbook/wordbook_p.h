@@ -32,7 +32,7 @@ friend class WordBookPrivate;
     WordList words() const;
 
     WordList correctTheWord(const std::string& word, int maxEditCount) const;
-    WordList correctTheWord(strciter begin, strciter end, int editCount, Operation prevOperation = Equals, std::set<const Node*>& selectedWords = std::set<const Node*>()) const;
+    WordList correctTheWord(strciter begin, strciter end, int editCount, Operation prevOperation, std::set<const Node*>& selectedWords) const;
     WordList correctInsert(strciter begin, strciter end, int editCount, Operation prevOperation, std::set<const Node*>& selectedWords) const;
     WordList correctRemove(strciter begin, strciter end, int editCount, Operation prevOperation, std::set<const Node*>& selectedWords) const;
     WordList correctEquals(strciter begin, strciter end, int editCount, Operation prevOperation, std::set<const Node*>& selectedWords) const;
