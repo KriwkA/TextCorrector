@@ -10,21 +10,21 @@ Clone, Build & Run
 Need tools:
   * C++11 Compiler
   * CMake
-  * Boost unit test framwork
+  * Boost unit test framework
 ```
-git clone https://github.com/KriwkA/TextCorrector.git
-cd TextCorrector
-mkdir bin
-cd bin
-cmake ../
-make
+> git clone https://github.com/KriwkA/TextCorrector.git
+> cd TextCorrector
+> mkdir bin
+> cd bin
+> cmake ../
+> make
 ```
 Run example
 ```
-./src/TextCorrector
+> ./src/TextCorrector
 ```
 
 Run tests
 ```
-  ./test/wordbook_test/wordbook_test
+> ./test/wordbook_test/wordbook_test
 ```
