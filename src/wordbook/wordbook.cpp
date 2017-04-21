@@ -155,7 +155,7 @@ WordList Node::correctTheWord(const strciter &begin, const strciter &end, int ed
 
     static int i = 0;
 
-    if(currentdp.check(begin, editCount, prevOperation) || editCount < 0) {        
+    if(currentdp.check(begin, editCount, prevOperation)) {
         return WordList();
     }
 
@@ -171,8 +171,10 @@ WordList Node::correctTheWord(const strciter &begin, const strciter &end, int ed
     }
 
     CORRECT_EQUALS;
-    CORRECT_REMOVE;
-    CORRECT_INSERT;
+    if(editCount) {
+        CORRECT_REMOVE;
+        CORRECT_INSERT;
+    }
 
     if(!isEndNode())
         currentdp.set(begin, editCount, prevOperation);
