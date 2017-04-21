@@ -10,35 +10,35 @@ class WordBook;
 class WordBookPrivate;
 
 typedef std::list<std::string> WordList;
-typedef  std::string::const_iterator strciter;
+typedef std::string::const_iterator strciter;
 
 class Node
 {
-enum Operation {Equals = 0, Remove = 1, Insert = 2, Replace = 4};
-#define CORRECT_PARAMS begin ,end, editCount, prevOperation, dp
-#define CORRECT_PUSH(correct_func) pushListToList(result, correct_func(CORRECT_PARAMS))
-#define CORRECT_EQUALS CORRECT_PUSH(correctEquals)
-#define CORRECT_REMOVE CORRECT_PUSH(correctRemove)
-#define CORRECT_INSERT CORRECT_PUSH(correctInsert)
+    enum Operation {Equals = 0, Remove = 1, Insert = 2, Replace = 4};
+    #define CORRECT_PARAMS begin ,end, editCount, prevOperation, dp
+    #define CORRECT_PUSH(correct_func) pushListToList(result, correct_func(CORRECT_PARAMS))
+    #define CORRECT_EQUALS CORRECT_PUSH(correctEquals)
+    #define CORRECT_REMOVE CORRECT_PUSH(correctRemove)
+    #define CORRECT_INSERT CORRECT_PUSH(correctInsert)
 
-struct DP {
-    typedef std::pair<strciter, Operation> Pair;
+    struct NodeChecker {
+        typedef std::pair<strciter, Operation> Pair;
 
-    std::map< int, std::set<Pair>> dp;
-    bool selected;
+        std::map< int, std::set<Pair>> dp;
+        bool selected;
 
-    DP() : selected(false) {}
+        NodeChecker() : selected(false) {}
 
-    bool check(strciter begin, int editCount, Operation oper) {
-        return dp.count(editCount) && dp.at(editCount).count(std::make_pair(begin, oper));
-    }
+        bool check(strciter begin, int editCount, Operation oper) {
+            return dp.count(editCount) && (editCount == 0 || dp.at(editCount).count(std::make_pair(begin, oper)));
+        }
 
-    void set(strciter begin, int editCount, Operation oper) {
-        dp[editCount].insert(std::make_pair(begin, oper));
-    }
-};
+        void set(strciter begin, int editCount, Operation oper) {
+            dp[editCount].insert(std::make_pair(begin, oper));
+        }
+    };
 
-friend class WordBookPrivate;
+    friend class WordBookPrivate;
 
     Node();
     explicit Node(char letter, const Node* parent = nullptr);
@@ -49,15 +49,15 @@ friend class WordBookPrivate;
     WordList words() const;
 
     WordList correctTheWord(const std::string& word, int maxEditCount) const;
-    WordList correctTheWord(strciter begin, strciter end, int editCount, Operation prevOperation, std::map<const Node*, DP>& dp) const;
-    WordList correctInsert(strciter begin, strciter end, int editCount, Operation prevOperation, std::map<const Node*, DP>& dp) const;
-    WordList correctRemove(strciter begin, strciter end, int editCount, Operation prevOperation, std::map<const Node*, DP>& dp) const;
-    WordList correctEquals(strciter begin, strciter end, int editCount, Operation prevOperation, std::map<const Node*, DP>& dp) const;
-    WordList correctForChilds(strciter begin, strciter end, int editCount, Operation prevOperation, std::map<const Node*, DP>& dp) const;
-    WordList correctForChildsAndEndNode(strciter begin, strciter end, int editCount, Operation prevOperation, std::map<const Node*, DP>& dp) const;
+    WordList correctTheWord(const strciter& begin, const strciter end, int editCount, Operation prevOperation, std::map<const Node*, NodeChecker>& dp) const;
+    WordList correctInsert(const strciter begin, const strciter end, int editCount, Operation prevOperation, std::map<const Node*, NodeChecker>& dp) const;
+    WordList correctRemove(const strciter begin, const strciter end, int editCount, Operation prevOperation, std::map<const Node*, NodeChecker>& dp) const;
+    WordList correctEquals(const strciter begin, const strciter end, int editCount, Operation prevOperation, std::map<const Node*, NodeChecker>& dp) const;
+    WordList correctForChilds(const strciter begin, const strciter end, int editCount, Operation prevOperation, std::map<const Node*, NodeChecker>& dp) const;
+    WordList correctForChildsAndEndNode(const strciter begin, const strciter end, int editCount, Operation prevOperation, std::map<const Node*, NodeChecker>& dp) const;
 
     std::string getWord() const;
-    void pushIfNotSelect(WordList& list,  std::map<const Node*, DP>& dp) const;
+    void pushIfNotSelect(WordList& list,  std::map<const Node*, NodeChecker>& dp) const;
     static void pushListToList(WordList& target, const WordList& data);
     inline bool isEndNode() const { return m_parent && m_letter == '\0'; }
 
