@@ -153,7 +153,9 @@ WordList Node::correctTheWord(const strciter &begin, const strciter end, int edi
 {
     auto& currentdp = dp[this];
 
-    if(currentdp.check(begin, editCount, prevOperation) || editCount < 0) {
+    static int i = 0;
+
+    if(currentdp.check(begin, editCount, prevOperation) || editCount < 0) {        
         return WordList();
     }
 
@@ -174,7 +176,6 @@ WordList Node::correctTheWord(const strciter &begin, const strciter end, int edi
 
     currentdp.set(begin, editCount, prevOperation);
 
-
     return result;
 }
 
@@ -194,7 +195,7 @@ WordList Node::correctRemove(const strciter begin, const strciter end, int editC
 
 WordList Node::correctEquals(const strciter begin, const strciter end, int editCount, Node::Operation prevOperation,  std::map<const Node*, NodeChecker>& dp) const
 {
-    if(*begin != m_letter)
+    if(begin == end || *begin != m_letter)
         return WordList();
     return correctForChildsAndEndNode(begin + 1, end, editCount, Equals, dp);
 }

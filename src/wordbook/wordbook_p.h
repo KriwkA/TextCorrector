@@ -29,11 +29,11 @@ class Node
 
         NodeChecker() : selected(false) {}
 
-        bool check(strciter begin, int editCount, Operation oper) {
+        inline bool check(strciter begin, int editCount, Operation oper) const {
             return dp.count(editCount) && (editCount == 0 || dp.at(editCount).count(std::make_pair(begin, oper)));
         }
 
-        void set(strciter begin, int editCount, Operation oper) {
+        inline void set(strciter begin, int editCount, Operation oper) {
             dp[editCount].insert(std::make_pair(begin, oper));
         }
     };
