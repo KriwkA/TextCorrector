@@ -174,7 +174,8 @@ WordList Node::correctTheWord(const strciter &begin, const strciter end, int edi
     CORRECT_REMOVE;
     CORRECT_INSERT;
 
-    currentdp.set(begin, editCount, prevOperation);
+    if(!isEndNode())
+        currentdp.set(begin, editCount, prevOperation);
 
     return result;
 }
