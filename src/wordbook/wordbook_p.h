@@ -22,18 +22,18 @@ class Node
     #define CORRECT_INSERT CORRECT_PUSH(correctInsert)
 
     struct NodeChecker {
-        typedef std::pair<strciter, Operation> Pair;
+        typedef std::pair<const strciter, Operation> Pair;
 
         std::map< int, std::set<Pair>> dp;
         bool selected;
 
         NodeChecker() : selected(false) {}
 
-        inline bool check(strciter begin, int editCount, Operation oper) const {
+        inline bool check(const strciter& begin, int editCount, Operation oper) const {
             return dp.count(editCount) && (editCount == 0 || dp.at(editCount).count(std::make_pair(begin, oper)));
         }
 
-        inline void set(strciter begin, int editCount, Operation oper) {
+        inline void set(const strciter& begin, int editCount, Operation oper) {
             dp[editCount].insert(std::make_pair(begin, oper));
         }
     };
@@ -44,17 +44,17 @@ class Node
     explicit Node(char letter, const Node* parent = nullptr);
     ~Node();
 
-    bool insert(strciter begin, strciter end);
-    bool hasWord(strciter begin, strciter end) const;
+    bool insert(const strciter &begin, const strciter &end);
+    bool hasWord(const strciter &begin, const strciter &end) const;
     WordList words() const;
 
     WordList correctTheWord(const std::string& word, int maxEditCount) const;
-    WordList correctTheWord(const strciter& begin, const strciter end, int editCount, Operation prevOperation, std::map<const Node*, NodeChecker>& dp) const;
-    WordList correctInsert(const strciter begin, const strciter end, int editCount, Operation prevOperation, std::map<const Node*, NodeChecker>& dp) const;
-    WordList correctRemove(const strciter begin, const strciter end, int editCount, Operation prevOperation, std::map<const Node*, NodeChecker>& dp) const;
-    WordList correctEquals(const strciter begin, const strciter end, int editCount, Operation prevOperation, std::map<const Node*, NodeChecker>& dp) const;
-    WordList correctForChilds(const strciter begin, const strciter end, int editCount, Operation prevOperation, std::map<const Node*, NodeChecker>& dp) const;
-    WordList correctForChildsAndEndNode(const strciter begin, const strciter end, int editCount, Operation prevOperation, std::map<const Node*, NodeChecker>& dp) const;
+    WordList correctTheWord(const strciter &begin, const strciter &end, int editCount, Operation prevOperation, std::map<const Node*, NodeChecker>& dp) const;
+    WordList correctInsert(const strciter &begin, const strciter &end, int editCount, Operation prevOperation, std::map<const Node*, NodeChecker>& dp) const;
+    WordList correctRemove(const strciter &begin, const strciter &end, int editCount, Operation prevOperation, std::map<const Node*, NodeChecker>& dp) const;
+    WordList correctEquals(const strciter &begin, const strciter &end, int editCount, Operation prevOperation, std::map<const Node*, NodeChecker>& dp) const;
+    WordList correctForChilds(const strciter &begin, const strciter &end, int editCount, Operation prevOperation, std::map<const Node*, NodeChecker>& dp) const;
+    WordList correctForChildsAndEndNode(const strciter &begin, const strciter &end, int editCount, Operation prevOperation, std::map<const Node*, NodeChecker>& dp) const;
 
     std::string getWord() const;
     void pushIfNotSelect(WordList& list,  std::map<const Node*, NodeChecker>& dp) const;

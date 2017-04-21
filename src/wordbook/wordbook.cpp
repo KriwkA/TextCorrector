@@ -97,7 +97,7 @@ Node::~Node() {
         delete node.second;
 }
 
-bool Node::insert(strciter begin, strciter end)
+bool Node::insert(const strciter &begin, const strciter &end)
 {
     if(begin == end) {
         if(m_letter == '\0' || m_wordEnd)
@@ -112,7 +112,7 @@ bool Node::insert(strciter begin, strciter end)
     return m_childs[*begin]->insert(begin + 1, end);
 }
 
-bool Node::hasWord(strciter begin, strciter end) const
+bool Node::hasWord(const strciter& begin, const strciter& end) const
 {
     if(begin == end) {
         return m_wordEnd;
@@ -149,7 +149,7 @@ WordList Node::correctTheWord(const std::string &word, int maxEditCount) const
     return result;
 }
 
-WordList Node::correctTheWord(const strciter &begin, const strciter end, int editCount, Node::Operation prevOperation,  std::map<const Node*, NodeChecker>& dp) const
+WordList Node::correctTheWord(const strciter &begin, const strciter &end, int editCount, Node::Operation prevOperation,  std::map<const Node*, NodeChecker>& dp) const
 {
     auto& currentdp = dp[this];
 
@@ -180,28 +180,28 @@ WordList Node::correctTheWord(const strciter &begin, const strciter end, int edi
     return result;
 }
 
-WordList Node::correctInsert(const strciter begin, const strciter end, int editCount, Node::Operation prevOperation,  std::map<const Node*, NodeChecker>& dp) const
+WordList Node::correctInsert(const strciter &begin, const strciter &end, int editCount, Node::Operation prevOperation,  std::map<const Node*, NodeChecker>& dp) const
 {
     if(prevOperation == Insert || isEndNode())
         return WordList();
     return correctForChildsAndEndNode(begin, end, editCount - 1, Insert, dp);
 }
 
-WordList Node::correctRemove(const strciter begin, const strciter end, int editCount, Node::Operation prevOperation,  std::map<const Node*, NodeChecker>& dp) const
+WordList Node::correctRemove(const strciter &begin, const strciter &end, int editCount, Node::Operation prevOperation,  std::map<const Node*, NodeChecker>& dp) const
 {
     if(prevOperation == Remove || begin == end)
         return WordList();
     return this->correctTheWord(begin + 1, end, editCount - 1, Remove, dp);
 }
 
-WordList Node::correctEquals(const strciter begin, const strciter end, int editCount, Node::Operation prevOperation,  std::map<const Node*, NodeChecker>& dp) const
+WordList Node::correctEquals(const strciter &begin, const strciter &end, int editCount, Node::Operation prevOperation,  std::map<const Node*, NodeChecker>& dp) const
 {
     if(begin == end || *begin != m_letter)
         return WordList();
     return correctForChildsAndEndNode(begin + 1, end, editCount, Equals, dp);
 }
 
-WordList Node::correctForChilds(const strciter begin, const strciter end, int editCount, Node::Operation prevOperation,  std::map<const Node*, NodeChecker>& dp) const
+WordList Node::correctForChilds(const strciter &begin, const strciter &end, int editCount, Node::Operation prevOperation,  std::map<const Node*, NodeChecker>& dp) const
 {
     WordList result;
     if(m_childs.size()) {
@@ -213,7 +213,7 @@ WordList Node::correctForChilds(const strciter begin, const strciter end, int ed
     return result;
 }
 
-WordList Node::correctForChildsAndEndNode(const strciter begin, const strciter end, int editCount, Node::Operation prevOperation,  std::map<const Node*, NodeChecker>& dp) const
+WordList Node::correctForChildsAndEndNode(const strciter &begin, const strciter &end, int editCount, Node::Operation prevOperation,  std::map<const Node*, NodeChecker>& dp) const
 {
     WordList result;
 
