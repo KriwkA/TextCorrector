@@ -25,15 +25,16 @@ WordBook::WordBook(WordBook &&other)
 
 void WordBook::insert(const std::string &word)
 {
-    if(word.empty())
-        throw std::length_error("word musn`t be empty");
-
     static const std::regex wordRegexpr(wordRegex);
-
-    if(!std::regex_match(word, wordRegexpr))
+    if(!word.empty()) {
+        if(std::regex_match(word, wordRegexpr)) {
+            m_private->insert(word);
+            return;
+        }
         throw std::invalid_argument("word has forbidden symbol");
-
-    m_private->insert(word);
+        return;
+    }
+    throw std::length_error("word musn`t be empty");
 }
 
 void WordBook::insert(const WordList &words)
@@ -116,51 +117,53 @@ Node::~Node() {
 
 bool Node::insert(const strciter &begin, const strciter &end)
 {
-    if(begin == end) {
-        if(m_letter == '\0' || m_wordEnd)
-            return false;
-        return m_wordEnd = true;
-    }
-
-    if(!m_childs.count(*begin)) {
+    if(begin != end) {
+        if(m_childs.count(*begin)) {
+            return m_childs[*begin]->insert(begin + 1, end);
+        }
         m_childs[*begin] = new Node(*begin, this);
+        return m_childs[*begin]->insert(begin + 1, end);
     }
 
-    return m_childs[*begin]->insert(begin + 1, end);
+    if(!(m_letter == '\0' || m_wordEnd))
+        return m_wordEnd = true;
+
+    return false;
 }
 
 bool Node::remove(const strciter &begin, const strciter &end)
 {
-    if(begin == end) {
-        if(m_letter == '\0' || !m_wordEnd)
-            return false;
+    if(begin != end) {
+        if(m_childs.count(*begin)) {
+            return m_childs[*begin]->remove(begin + 1, end);
+        }
+        return false;
+
+    }
+
+    if(!(m_letter == '\0' || !m_wordEnd)) {
         m_wordEnd = false;
         return true;
     }
 
-    if(!m_childs.count(*begin)) {
-        return false;
-    }
-
-    return m_childs[*begin]->remove(begin + 1, end);
+    return false;
 }
 
 bool Node::hasWord(const strciter& begin, const strciter& end) const
 {
-    if(begin == end) {
-        return m_wordEnd;
-    }
-
-    if(!m_childs.count(*begin)) {
+    if(begin != end) {
+        if(m_childs.count(*begin)) {
+            return m_childs.at(*begin)->hasWord(begin + 1, end);
+        }
         return false;
     }
-
-    return m_childs.at(*begin)->hasWord(begin + 1, end);
+    return m_wordEnd;
 }
 
 WordList Node::words() const
 {
     WordList result;
+
     if(m_wordEnd) {
         result.push_back(getWord());
     }
@@ -168,6 +171,7 @@ WordList Node::words() const
     for(const auto& child : m_childs) {
         pushListToList(result, child.second->words());
     }
+
     return result;
 }
 
@@ -194,21 +198,27 @@ WordList Node::correctTheWord(const strciter &begin, const strciter &end, int ed
 
     WordList result;
 
-    if(begin == end) {
-        m_parent->pushIfNotSelect(result, dp);
-        if(isEndNode())
-            return result;
+    const bool strEnd = begin == end;
+
+    if(!(strEnd && isEndNode())) {
+
+        if(strEnd) {
+            m_parent->pushIfNotSelect(result, dp);
+        }
+
+        CORRECT_EQUALS;
+        if(editCount) {
+            CORRECT_REMOVE;
+            CORRECT_INSERT;
+        }
+
+        if(!isEndNode())
+            currentdp.set(begin, editCount, prevOperation);
+
+        return result;
     }    
 
-    CORRECT_EQUALS;
-    if(editCount) {
-        CORRECT_REMOVE;
-        CORRECT_INSERT;
-    }
-
-    if(!isEndNode())
-        currentdp.set(begin, editCount, prevOperation);
-
+    m_parent->pushIfNotSelect(result, dp);
     return result;
 }
 
