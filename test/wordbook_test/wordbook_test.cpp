@@ -5,6 +5,7 @@
 #include <list>
 #include <string>
 #include <algorithm>
+#include <utility>
 
 
 bool contains(const WordList& list, const std::string& word) {
@@ -25,8 +26,8 @@ bool contains(const WordList& list, const std::initializer_list<std::string>& wo
 
 const std::initializer_list<std::string> words = {
     "rain", "spain", "plain", "plaint", "pain",
-    "main", "mainly", "the", "the", "in", "on",
-    "fall", "falls", "his", "his", "was"
+    "main", "mainly", "the", "in", "on",
+    "fall", "falls", "his", "was"
 };
 
 BOOST_AUTO_TEST_CASE( insert_test )
@@ -70,12 +71,11 @@ BOOST_AUTO_TEST_CASE( words_test )
 {
     WordBook list;
 
-    WordList words({"one", "two", "three", "four", "five"});
 
     list.insert(words);
     WordList wordsFromList = list.words();
 
-    BOOST_CHECK_EQUAL(list.size(), 5);
+    BOOST_CHECK_EQUAL(wordsFromList.size(), words.size());
     BOOST_CHECK(contains(wordsFromList, words));    
 }
 
@@ -121,4 +121,13 @@ BOOST_AUTO_TEST_CASE( remove_test )
     const auto lain = list.correctTheWord("lain");
     BOOST_CHECK(lain.size() == 4 && contains(lain, {"main", "pain", "plain", "plaint"}));
 
+}
+
+BOOST_AUTO_TEST_CASE( move_constructor_test )
+{
+    WordBook list;
+    list.insert(words);
+    WordBook list2(std::move(list));
+    BOOST_CHECK_EQUAL(list.size(), 0);
+    BOOST_CHECK_EQUAL(list2.size(), words.size());
 }

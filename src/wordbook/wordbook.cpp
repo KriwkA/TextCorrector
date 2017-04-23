@@ -131,7 +131,18 @@ bool Node::insert(const strciter &begin, const strciter &end)
 
 bool Node::remove(const strciter &begin, const strciter &end)
 {
-    return false;
+    if(begin == end) {
+        if(m_letter == '\0' || !m_wordEnd)
+            return false;
+        m_wordEnd = false;
+        return true;
+    }
+
+    if(!m_childs.count(*begin)) {
+        return false;
+    }
+
+    return m_childs[*begin]->remove(begin + 1, end);
 }
 
 bool Node::hasWord(const strciter& begin, const strciter& end) const
