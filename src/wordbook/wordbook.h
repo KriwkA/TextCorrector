@@ -19,6 +19,8 @@ public:
     explicit WordBook(int maxEditCount = 2);
     ~WordBook();
 
+    WordBook(WordBook&& other);
+
     /*
      * This functions insert word(s) into wordbook
      *
@@ -28,6 +30,9 @@ public:
      */
     void insert(const std::string& word);
     void insert(const WordList& words);
+
+    // This function removes word from wordbook if its exists
+    void remove(const std::string& word);
 
     // This function return count of words inside wordbook
     int size() const;
@@ -50,9 +55,8 @@ public:
 private:
     WordBookPrivate* m_private;
 
-    //remove copy, move constructors and assignment operator
-    WordBook(const WordBook& other) = delete;
-    WordBook(const WordBook&& other) = delete;
+    //remove copy constructor and assignment operator
+    WordBook(const WordBook& other) = delete;    
     void operator=(const WordBook& other) = delete;
 };
 

@@ -17,6 +17,12 @@ WordBook::~WordBook()
     delete m_private;
 }
 
+WordBook::WordBook(WordBook &&other)
+{
+    m_private = other.m_private;
+    other.m_private = new WordBookPrivate(m_private->m_maxEditCount);
+}
+
 void WordBook::insert(const std::string &word)
 {
     if(word.empty())
@@ -34,6 +40,11 @@ void WordBook::insert(const WordList &words)
 {
     for(const auto& word : words)
         insert(word);
+}
+
+void WordBook::remove(const std::string &word)
+{
+    m_private->remove(word);
 }
 
 int WordBook::size() const
@@ -78,6 +89,12 @@ void WordBookPrivate::insert(const std::string &word)
         m_size++;
 }
 
+void WordBookPrivate::remove(const std::string &word)
+{
+    if(m_words->remove(word.cbegin(), word.cend()))
+        m_size--;
+}
+
 WordList WordBookPrivate::words() const
 {
     return m_words->words();
@@ -110,6 +127,11 @@ bool Node::insert(const strciter &begin, const strciter &end)
     }
 
     return m_childs[*begin]->insert(begin + 1, end);
+}
+
+bool Node::remove(const strciter &begin, const strciter &end)
+{
+    return false;
 }
 
 bool Node::hasWord(const strciter& begin, const strciter& end) const
@@ -161,14 +183,11 @@ WordList Node::correctTheWord(const strciter &begin, const strciter &end, int ed
 
     WordList result;
 
-    if(begin == end && isEndNode()) {
+    if(begin == end) {
         m_parent->pushIfNotSelect(result, dp);
-        return result;
-    }
-
-    if(begin == end && m_parent->m_wordEnd) {
-        m_parent->pushIfNotSelect(result, dp);
-    }
+        if(isEndNode())
+            return result;
+    }    
 
     CORRECT_EQUALS;
     if(editCount) {
@@ -242,7 +261,7 @@ std::string Node::getWord() const {
 void Node::pushIfNotSelect(WordList &list, std::map<const Node*, NodeChecker>& dp) const
 {
     auto& currentdp = dp[this];
-    if(currentdp.selected)
+    if(currentdp.selected || !this->m_wordEnd)
         return;
     currentdp.selected = true;
     list.push_back(getWord());

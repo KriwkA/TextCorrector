@@ -23,11 +23,17 @@ bool contains(const WordList& list, const std::initializer_list<std::string>& wo
     return contains(list, WordList(words));
 }
 
+const std::initializer_list<std::string> words = {
+    "rain", "spain", "plain", "plaint", "pain",
+    "main", "mainly", "the", "the", "in", "on",
+    "fall", "falls", "his", "his", "was"
+};
 
 BOOST_AUTO_TEST_CASE( insert_test )
 {
     WordBook list;
     BOOST_CHECK_NO_THROW(list.insert("rain"));
+    BOOST_CHECK_NO_THROW(list.insert(words));
     BOOST_CHECK_THROW(list.insert("spain,"), std::invalid_argument);
     BOOST_CHECK_THROW(list.insert(""), std::length_error);
 }
@@ -76,20 +82,7 @@ BOOST_AUTO_TEST_CASE( words_test )
 BOOST_AUTO_TEST_CASE( correctTheWord_test )
 {
     WordBook list;
-    list.insert("rain");
-    list.insert("spain");
-    list.insert("plain");
-    list.insert("plaint");
-    list.insert("pain");
-    list.insert("main");
-    list.insert("mainly");
-    list.insert("the");
-    list.insert("in");
-    list.insert("on");
-    list.insert("fall");
-    list.insert("falls");
-    list.insert("his");
-    list.insert("was");
+    list.insert(words);
 
     const auto hte = list.correctTheWord("hte");
     const auto rame = list.correctTheWord("rame");
@@ -116,5 +109,16 @@ BOOST_AUTO_TEST_CASE( correctTheWord_test )
     BOOST_CHECK(was.size() == 1 && contains(was, "was"));
     BOOST_CHECK(hints.size() == 0);
     BOOST_CHECK(pliant.size() == 1 && contains(pliant, "plaint"));
+
+}
+
+BOOST_AUTO_TEST_CASE( remove_test )
+{
+    WordBook list;
+    list.insert(words);
+    list.remove("rain");
+    BOOST_CHECK(!list.hasWord("rain"));
+    const auto lain = list.correctTheWord("lain");
+    BOOST_CHECK(lain.size() == 4 && contains(lain, {"main", "pain", "plain", "plaint"}));
 
 }

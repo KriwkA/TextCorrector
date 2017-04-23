@@ -45,6 +45,7 @@ class Node
     ~Node();
 
     bool insert(const strciter &begin, const strciter &end);
+    bool remove(const strciter &begin, const strciter &end);
     bool hasWord(const strciter &begin, const strciter &end) const;
     WordList words() const;
 
@@ -78,14 +79,13 @@ class WordBookPrivate
     ~WordBookPrivate();
 
     void insert(const std::string& word);
-    inline bool hasWord(const std::string& word) const { return m_words->hasWord(word.cbegin(), word.cend()); }
+    void remove(const std::string& word);
     WordList words() const;
-
-    int m_size;
+    inline bool hasWord(const std::string& word) const { return m_words->hasWord(word.cbegin(), word.cend()); }    
     inline int size() const { return m_size; }
-
     inline WordList correctTheWord(const std::string &word) const { return m_words->correctTheWord(word, m_maxEditCount); }
 
+    int m_size;
     const int m_maxEditCount;
     Node* m_words;
 };
